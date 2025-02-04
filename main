@@ -1,0 +1,124 @@
+local player = game.Players.LocalPlayer;
+local screenGui = Instance.new("ScreenGui");
+screenGui.Parent = player:WaitForChild("PlayerGui");
+local frame = Instance.new("Frame");
+frame.Size = UDim2.new(0, 400, 0, 400);
+frame.Position = UDim2.new(0.5, -200, 0.5, -200);
+frame.BackgroundColor3 = Color3.fromRGB(50, 50, 50);
+frame.Parent = screenGui;
+local isMinimized = false;
+local dragging = false;
+local dragStart;
+local startPos;
+frame.InputBegan:Connect(function(input)
+	if (input.UserInputType == Enum.UserInputType.MouseButton1) then
+		dragging = true;
+		dragStart = input.Position;
+		startPos = frame.Position;
+		input.Changed:Connect(function()
+			if (input.UserInputState == Enum.UserInputState.End) then
+				dragging = false;
+			end
+		end);
+	end
+end);
+game:GetService("UserInputService").InputChanged:Connect(function(input)
+	if (dragging and (input.UserInputType == Enum.UserInputType.MouseMovement)) then
+		local delta = input.Position - dragStart;
+		frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y);
+	end
+end);
+local function createPlayerButton(playerName, positionY)
+	local button = Instance.new("TextButton");
+	button.Size = UDim2.new(0, 380, 0, 50);
+	button.Position = UDim2.new(0, 10, 0, positionY);
+	button.Text = playerName;
+	button.TextSize = 20;
+	button.TextColor3 = Color3.fromRGB(255, 255, 255);
+	button.BackgroundColor3 = Color3.fromRGB(30, 30, 30);
+	button.Font = Enum.Font.GothamBold;
+	button.Parent = frame;
+	button.ZIndex = 1;
+	button.MouseButton1Click:Connect(function()
+		setclipboard(playerName);
+	end);
+end
+local function makeDraggable(draggableObj)
+	local dragging = false;
+	local dragStart;
+	local startPos;
+	local threshold = 5;
+	local moved = false;
+	draggableObj.InputBegan:Connect(function(input)
+		if (input.UserInputType == Enum.UserInputType.MouseButton1) then
+			dragging = true;
+			moved = false;
+			dragStart = input.Position;
+			startPos = frame.Position;
+			input.Changed:Connect(function()
+				if (input.UserInputState == Enum.UserInputState.End) then
+					dragging = false;
+				end
+			end);
+		end
+	end);
+	draggableObj.InputChanged:Connect(function(input)
+		if (dragging and (input.UserInputType == Enum.UserInputType.MouseMovement)) then
+			local delta = input.Position - dragStart;
+			if (delta.Magnitude > threshold) then
+				moved = true;
+			end
+			frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y);
+		end
+	end);
+	return function()
+		return moved;
+	end;
+end
+local function createToggleButton()
+	local toggleButton = Instance.new("TextButton");
+	toggleButton.Name = "ToggleButton";
+	toggleButton.Size = UDim2.new(0, 100, 0, 25);
+	toggleButton.Position = UDim2.new(1, -110, 0, 10);
+	toggleButton.Text = "";
+	toggleButton.TextSize = 20;
+	toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255);
+	toggleButton.BackgroundColor3 = Color3.fromRGB(80, 80, 80);
+	toggleButton.Font = Enum.Font.GothamBold;
+	toggleButton.BorderSizePixel = 3;
+	toggleButton.BorderColor3 = Color3.fromRGB(200, 200, 200);
+	toggleButton.Parent = frame;
+	toggleButton.ZIndex = 10;
+	local toggleMoved = makeDraggable(toggleButton);
+	toggleButton.MouseButton1Click:Connect(function()
+		if not toggleMoved() then
+			isMinimized = not isMinimized;
+			updatePlayerList();
+		end
+	end);
+end
+function updatePlayerList()
+	for _, obj in ipairs(frame:GetChildren()) do
+		if (obj:IsA("TextButton") and (obj.Name ~= "ToggleButton")) then
+			obj:Destroy();
+		end
+	end
+	if not frame:FindFirstChild("ToggleButton") then
+		createToggleButton();
+	end
+	if isMinimized then
+		frame.Size = UDim2.new(0, 100, 0, 50);
+		frame.BackgroundTransparency = 1;
+	else
+		frame.BackgroundTransparency = 0;
+		local positionY = 10;
+		for _, p in ipairs(game.Players:GetPlayers()) do
+			createPlayerButton(p.Name, positionY);
+			positionY = positionY + 60;
+		end
+		frame.Size = UDim2.new(0, 400, 0, positionY + 10);
+	end
+end
+updatePlayerList();
+game.Players.PlayerAdded:Connect(updatePlayerList);
+game.Players.PlayerRemoved:Connect(updatePlayerList);
