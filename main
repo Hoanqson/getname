@@ -1,12 +1,1083 @@
---[[
- .____                  ________ ___.    _____                           __                
- |    |    __ _______   \_____  \\_ |___/ ____\_ __  ______ ____ _____ _/  |_  ___________ 
- |    |   |  |  \__  \   /   |   \| __ \   __\  |  \/  ___// ___\\__  \\   __\/  _ \_  __ \
- |    |___|  |  // __ \_/    |    \ \_\ \  | |  |  /\___ \\  \___ / __ \|  | (  <_> )  | \/
- |_______ \____/(____  /\_______  /___  /__| |____//____  >\___  >____  /__|  \____/|__|   
-         \/          \/         \/    \/                \/     \/     \/                   
-          \_Welcome to LuaObfuscator.com   (Alpha 0.10.9) ~  Much Love, Ferib 
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local hrp = character:WaitForChild("HumanoidRootPart")
+local humanoid = character:WaitForChild("Humanoid")
 
-]]--
+local CONFIG = {
+    targetNames = {"Bond"},
+    espColor = Color3.fromRGB(0, 191, 255),
+    maxDistance = 1000,
+    updateInterval = 1,
+    refreshInterval = 5,
+    toggleKey = Enum.KeyCode.B,
+    espSize = UDim2.new(0, 200, 0, 50),
+    espFont = Enum.Font.SourceSansBold,
+    espTextSize = 16,
+    espTextStrokeTransparency = 0,
+    espTextStrokeColor = Color3.new(0, 0, 0),
+    guiFrameSize = UDim2.new(0, 250, 0, 280),
+    guiFramePosition = UDim2.new(0.5, -125, 0.2, 0),
+    guiBackgroundColor = Color3.fromRGB(40, 40, 40),
+    guiBackgroundTransparency = 0.1,
+    guiBorderColor = Color3.fromRGB(0, 255, 255),
+    guiBorderThickness = 3,
+    guiTitleColor = Color3.fromRGB(0, 255, 255),
+    guiButtonColor = Color3.fromRGB(0, 150, 255),
+    guiToggleOnColor = Color3.fromRGB(220, 50, 50),
+    guiToggleOffColor = Color3.fromRGB(50, 180, 50),
+    miniButtonSize = UDim2.new(0, 50, 0, 50),
+    miniButtonPosition = UDim2.new(0, 20, 0, 20),
+    miniButtonColor = Color3.fromRGB(40, 40, 40),
+    miniButtonBackgroundTransparency = 0.1,
+    miniButtonTextColor = Color3.fromRGB(0, 200, 255),
+    miniButtonText = "ESP",
+    miniButtonTextSize = 10,
+    miniButtonToggleKey = Enum.KeyCode.RightControl,
+    notificationDuration = 3,
+    walkSpeed = 20,
+    walkStopDistance = 3,
+    walkUpdateRate = 0.1,
+    originalWalkSpeed = nil,
+    walkPathColor = Color3.fromRGB(255, 255, 0),
+    showWalkPath = false,
+    continuousWalk = true,
+    walkRetryInterval = 1,
+    maxWalkRetries = 10,
+    noclipToggleKey = Enum.KeyCode.N,
+    interactKey = Enum.KeyCode.E,
+    interactToggleKey = Enum.KeyCode.G,
+    interactInterval = 0.1,
+    interactDistance = 3,
+    debugMode = false
+}
 
-local v0=string.char;local v1=string.byte;local v2=string.sub;local v3=bit32 or bit ;local v4=v3.bxor;local v5=table.concat;local v6=table.insert;local function v7(v55,v56) local v57={};for v304=1, #v55 do v6(v57,v0(v4(v1(v2(v55,v304,v304 + 1 )),v1(v2(v56,1 + (v304% #v56) ,1 + (v304% #v56) + 1 )))%256 ));end return v5(v57);end local v8=game.Players.LocalPlayer;local v9=v8.Character or v8.CharacterAdded:Wait() ;local v10=v9:WaitForChild(v7("\249\214\214\36\232\180\206\26\227\204\212\49\214\186\213\10","\126\177\163\187\69\134\219\167"));local v11=v9:WaitForChild(v7("\11\216\39\196\242\44\196\46","\156\67\173\74\165"));local v12={[v7("\32\182\91\17\185\50\104\53\186\76\5","\38\84\215\41\118\220\70")]={v7("\114\25\44\22","\158\48\118\66\114")},[v7("\174\55\0\21\124\169\244\185","\155\203\68\112\86\19\197")]=Color3.fromRGB(0 -0 ,590 -399 ,42 + 213 ),[v7("\75\220\46\216\73\107\241\249\72\222\51","\152\38\189\86\156\32\24\133")]=2248 -(111 + 1137) ,[v7("\233\71\163\71\232\82\142\72\232\82\181\80\253\91","\38\156\55\199")]=159 -(91 + 67) ,[v7("\186\120\122\58\22\103\242\106\166\105\121\58\5\117\246","\35\200\29\28\72\115\20\154")]=14 -9 ,[v7("\13\176\214\216\129\41\31\28\166","\84\121\223\177\191\237\76")]=Enum.KeyCode.B,[v7("\190\69\217\147\51\74\53","\161\219\54\169\192\90\48\80")]=UDim2.new(0 + 0 ,50 + 150 ,523 -(423 + 100) ,50),[v7("\76\81\16\3\70\76\20","\69\41\34\96")]=Enum.Font.SourceSansBold,[v7("\185\208\199\62\7\51\168\240\222\16\7","\75\220\163\183\106\98")]=43 -27 ,[v7("\7\169\155\3\220\26\174\184\35\203\13\177\142\3\203\3\180\152\39\216\16\191\133\52\192","\185\98\218\235\87")]=0 -0 ,[v7("\206\47\55\210\219\178\223\15\51\244\209\161\206\31\40\234\209\184","\202\171\92\71\134\190")]=Color3.new(0 + 0 ,0 -0 ,0 + 0 ),[v7("\46\212\37\174\59\192\33\141\26\200\54\141","\232\73\161\76")]=UDim2.new(0 + 0 ,1021 -(326 + 445) ,0 -0 ,623 -343 ),[v7("\188\204\75\123\12\186\212\71\109\17\168\208\86\84\17\181","\126\219\185\34\61")]=UDim2.new(0.5 -0 , -(604 -(341 + 138)),711.2 -(530 + 181) ,0 -0 ),[v7("\11\219\87\80\127\116\248\224\30\193\75\124\122\84\252\235\3\220","\135\108\174\62\18\30\23\147")]=Color3.fromRGB(921 -(614 + 267) ,366 -(89 + 237) ,72 -(19 + 13) ),[v7("\177\252\35\233\25\173\56\192\164\230\63\197\28\154\33\198\184\250\58\202\10\171\61\196\175","\167\214\137\74\171\120\206\83")]=0.1 -0 ,[v7("\140\229\59\127\247\181\143\245\32\126\247\171\132\226","\199\235\144\82\61\152")]=Color3.fromRGB(0 -0 ,1136 -(581 + 300) ,593 -338 ),[v7("\0\3\176\9\8\4\189\46\21\34\177\34\4\29\183\46\20\5","\75\103\118\217")]=8 -5 ,[v7("\192\65\121\32\176\10\203\81\83\27\181\17\213","\126\167\52\16\116\217")]=Color3.fromRGB(0 + 0 ,255,448 -193 ),[v7("\207\59\41\162\161\13\232\199\32\3\143\184\22\238","\156\168\78\64\224\212\121")]=Color3.fromRGB(0 -0 ,1962 -(1293 + 519) ,240 + 15 ),[v7("\0\251\172\250\8\233\162\194\2\193\171\237\8\226\170\220","\174\103\142\197")]=Color3.fromRGB(448 -228 ,336 -(156 + 130) ,113 -63 ),[v7("\81\61\86\12\42\89\255\90\45\112\62\35\125\247\90\39\77","\152\54\72\63\88\69\62")]=Color3.fromRGB(130 -80 ,344 -164 ,215 -165 ),[v7("\217\205\224\85\246\209\250\72\219\202\221\85\206\193","\60\180\164\142")]=UDim2.new(0 -0 ,27 + 23 ,0 + 0 ,50),[v7("\85\87\11\32\5\248\6\76\81\11\25\40\254\27\76\87\10\39","\114\56\62\101\73\71\141")]=UDim2.new(0 -0 ,5 + 15 ,0 + 0 ,13 + 7 ),[v7("\181\224\213\205\154\252\207\208\183\231\248\203\180\230\201","\164\216\137\187")]=Color3.fromRGB(1136 -(709 + 387) ,40,1898 -(673 + 1185) ),[v7("\223\239\63\187\132\235\31\198\233\63\144\167\253\0\213\244\62\167\168\250\63\192\231\63\161\182\255\25\215\232\50\171","\107\178\134\81\210\198\158")]=0.1 -0 ,[v7("\53\7\140\207\136\45\26\150\201\164\12\11\154\210\137\55\2\141\212","\202\88\110\226\166")]=Color3.fromRGB(0 + 0 ,642 -442 ,255),[v7("\206\6\140\254\232\214\27\150\248\196\247\10\154\227","\170\163\111\226\151")]=v7("\52\3\130","\73\113\80\210\88\46\87"),[v7("\140\37\195\27\197\148\56\217\29\233\181\41\213\6\212\136\54\200","\135\225\76\173\114")]=16 -6 ,[v7("\23\228\182\185\142\168\179\14\226\182\132\163\186\160\22\232\147\181\181","\199\122\141\216\208\204\221")]=Enum.KeyCode.RightControl,[v7("\163\210\4\249\126\255\174\220\4\249\119\248\137\200\2\241\108\255\162\211","\150\205\189\112\144\24")]=3 + 0 ,[v7("\50\133\179\71\55\152\20\21\33","\112\69\228\223\44\100\232\113")]=223 -(11 + 192) ,[v7("\195\30\11\216\133\104\137\196\59\14\192\162\125\136\215\26","\230\180\127\103\179\214\28")]=2 + 1 ,[v7("\155\4\83\77\209\81\228\141\17\90\116\229\85\229","\128\236\101\63\38\132\33")]=175.1 -(135 + 40) ,[v7("\163\187\24\67\191\229\206\160\158\16\72\189\216\223\169\172\21","\175\204\201\113\36\214\139")]=nil,[v7("\80\205\57\215\52\70\216\61\255\11\75\195\39","\100\39\172\85\188")]=Color3.fromRGB(617 -362 ,191 + 64 ,0 -0 ),[v7("\190\112\182\151\4\172\116\178\176\50\185\112","\83\205\24\217\224")]=false,[v7("\229\202\195\41\239\203\216\50\243\214\250\60\234\206","\93\134\165\173")]=true,[v7("\169\243\205\201\8\203\166\108\167\219\207\214\63\220\164\127\178","\30\222\146\161\162\90\174\210")]=1 + 0 ,[v7("\232\79\104\61\228\66\123\56\224\90\98\3\224\93","\106\133\46\16")]=19 -9 ,[v7("\86\47\112\240\83\80\108\47\116\251\86\69\115\37\106","\32\56\64\19\156\58")]=Enum.KeyCode.N,[v7("\83\198\241\83\72\243\131\78\227\224\79","\224\58\168\133\54\58\146")]=Enum.KeyCode.E,[v7("\80\88\95\248\103\135\132\31\109\89\76\250\121\131\172\14\64","\107\57\54\43\157\21\230\231")]=Enum.KeyCode.G,[v7("\210\133\5\240\171\221\204\207\162\31\225\188\206\217\218\135","\175\187\235\113\149\217\188")]=0.1 -0 ,[v7("\53\161\149\73\241\120\123\40\139\136\95\247\120\118\63\170","\24\92\207\225\44\131\25")]=1883 -(446 + 1434) ,[v7("\79\214\186\89\28\80\68\215\189","\29\43\179\216\44\123")]=false};local v13=false;local v14={};local v15={};local v16=nil;local v17=nil;local v18=nil;local v19=nil;local v20=nil;local v21=true;local v22=false;local v23=nil;local v24=nil;local v25=nil;local v26=1283 -(1040 + 243) ;local v27=nil;local v28=false;local v29=nil;local v30=false;local v31=nil;local v32=false;local v33;local v34;local v35;local v36;local v37;local v38;local v39;local v40;local function v41(v58) local v59=0 -0 ;local v60;local v61;while true do local v305=1413 -(1233 + 180) ;local v306;while true do if (v305==(969 -(522 + 447))) then v306=1847 -(559 + 1288) ;while true do if ((1 + 0)==v306) then if (v59==(5 -3)) then return v60;end break;end if (v306==(1931 -(609 + 1322))) then if (v59==(454 -(13 + 441))) then if ( not v58 or (typeof(v58)~=v7("\148\215\51\88\188\215\35\73","\44\221\185\64")) or  not v58:IsDescendantOf(game)) then return v10.Position;end v60=nil;v59=3 -2 ;end if (v59==(2 -1)) then v61=pcall(function() if v58:IsA(v7("\35\230\91\90\67\0\245\92","\19\97\135\40\63")) then v60=v58.Position;elseif (v58:IsA(v7("\131\83\55\62\35","\81\206\60\83\91\79")) or v58:IsA(v7("\122\164\223\126","\196\46\203\176\18\79\163\45")) or v58:IsA(v7("\153\33\125\27\55\232\224\170\59","\143\216\66\30\126\68\155"))) then v60=v58:GetPivot().Position;elseif v58.PrimaryPart then v60=v58.PrimaryPart.Position;else for v536,v537 in ipairs(v58:GetDescendants()) do if v537:IsA(v7("\136\201\30\206\245\162\197\245","\129\202\168\109\171\165\195\183")) then v60=v537.Position;break;end end end end);if ( not v61 or  not v60) then return v10.Position;end v59=9 -7 ;end v306=1 + 0 ;end end break;end end end end local function v42(v62,v63) local v64=0 -0 ;local v65;local v66;local v67;local v68;local v69;while true do if (v64==(3 + 4)) then pcall(function() v67.Parent=v69;end);table.insert(v14,v67);return v67,v68;end if (v64==(1 + 1)) then v67.Size=v12.espSize;v67.StudsOffset=Vector3.new(0 -0 ,2,0 + 0 );v67.Adornee=v62;v64=4 -1 ;end if (v64==(0 + 0)) then if ( not v62 or  not v62:IsDescendantOf(game)) then return nil,nil;end v65=v41(v62);v66=(v10.Position-v65).Magnitude;v64=1 + 0 ;end if (v64==5) then v68.TextStrokeTransparency=v12.espTextStrokeTransparency;v68.TextSize=v12.espTextSize;v68.Font=v12.espFont;v64=11 -5 ;end if (v64==(1 + 0)) then v67=Instance.new(v7("\0\81\59\212\220\27\231\48\92\16\205\215","\134\66\56\87\184\190\116"));v67.Name=v7("\21\37\12\182\60\216\17","\85\92\81\105\219\121\139\65");v67.AlwaysOnTop=true;v64=2 + 0 ;end if (v64==(4 + 0)) then v68.Text=v63   .. v7("\159\36","\90\191\127\148\124")   .. math.floor(v66)   .. v7("\117\186","\119\24\231\78") ;v68.TextColor3=v12.espColor;v68.TextStrokeColor3=v12.espTextStrokeColor;v64=15 -10 ;end if (v64==(436 -(153 + 280))) then v68=Instance.new(v7("\201\182\72\81\80\222\255\182\92","\191\157\211\48\37\28"));v68.BackgroundTransparency=2 -1 ;v68.Size=UDim2.new(1 + 0 ,0 + 0 ,18 -(12 + 5) ,0 + 0 );v64=4 + 0 ;end if (v64==(5 + 1)) then v68.TextScaled=false;v68.Parent=v67;v69=game:GetService(v7("\161\34\183\79\251\85\24","\113\226\77\197\42\188\32"));v64=9 -2 ;end end end local function v43() local v70=0 + 0 ;local v71;while true do if (v70==(668 -(89 + 578))) then v71=1184 -(1058 + 125) ;while v71<= #v15  do local v369=0 + 0 ;local v370;while true do if (v369==(0 -0)) then v370=v15[v71];if ( not v370 or  not v370.part or  not v370.part:IsDescendantOf(game) or  not v370.billboard or  not v370.billboard.Parent) then local v454=1049 -(572 + 477) ;local v455;while true do if (v454==(0 + 0)) then v455=0;while true do if (v455==(1 + 0)) then table.remove(v15,v71);break;end if ((0 + 0)==v455) then if (v370 and v370.billboard and v370.billboard.Parent) then v370.billboard:Destroy();end if (v25 and (v25==v370)) then v25=nil;if (v22 and v12.continuousWalk) then task.spawn(function() local v547=0 + 0 ;while true do if (v547==(86 -(84 + 2))) then task.wait(0.5 -0 );v34(true);break;end end end);end end v455=1 + 0 ;end end break;end end else v71=v71 + (843 -(497 + 345)) ;end break;end end end break;end if (v70==0) then local v350=0 + 0 ;while true do if ((0 -0)==v350) then v71=1 + 0 ;while v71<= #v14  do local v436=0;local v437;while true do if (v436==(1333 -(605 + 728))) then v437=v14[v71];if ( not v437 or  not v437.Parent) then table.remove(v14,v71);else v71=v71 + 1 + 0 ;end break;end end end v350=1 -0 ;end if (v350==(1 + 0)) then v70=3 -2 ;break;end end end end end local function v44() local v72=0;local v73;local v74;local v75;local v76;while true do if (v72==(3 + 0)) then local v351=0 -0 ;while true do if (v351==(0 + 0)) then if v12.debugMode then if (v73>0) then print("ÄĂ£ tĂ¬m tháº¥y tá»•ng cá»™ng "   .. v73   .. " váº­t pháº©m phĂ¹ há»£p" );else print("KhĂ´ng tĂ¬m tháº¥y váº­t pháº©m nĂ o phĂ¹ há»£p trong Workspace");end end return v74;end end end if (v72==(490 -(457 + 32))) then v74={};v75={};for v371,v372 in ipairs(v15) do if (v372.part and v372.part:IsDescendantOf(game) and v372.billboard and v372.billboard.Parent) then local v403=0 + 0 ;local v404;while true do if (v403==(1402 -(832 + 570))) then v404=false;for v482,v483 in ipairs(v12.targetNames) do if (v372.part.Name==v483) then local v500=v41(v372.part);local v501=(v10.Position-v500).Magnitude;if (v501<=v12.maxDistance) then v75[v372.part]=true;table.insert(v74,v372);v404=true;v73=v73 + 1 + 0 ;break;end end end v403=1 + 0 ;end if (v403==(1 + 0)) then if ( not v404 and v372.billboard) then pcall(function() v372.billboard:Destroy();end);end break;end end end end v72=6 -4 ;end if (v72==(0 + 0)) then if  not v13 then return {};end v43();v73=796 -(588 + 208) ;v72=2 -1 ;end if (v72==(2 + 0)) then v76=nil;function v76(v373) if  not v13 then return;end for v385,v386 in pairs(v373:GetChildren()) do local v387=1541 -(718 + 823) ;local v388;while true do if (v387==(1800 -(884 + 916))) then v388=0 -0 ;while true do if (v388==(1 + 0)) then if ( #v386:GetChildren()>(653 -(232 + 421))) then v76(v386);end break;end if (v388==(1889 -(1569 + 320))) then if  not v13 then return;end for v502,v503 in ipairs(v12.targetNames) do if ((v386.Name==v503) and  not v75[v386]) then local v523=0 + 0 ;local v524;local v525;while true do if ((1 -0)==v523) then if (v525<=v12.maxDistance) then v73=v73 + 1 + 0 ;if v12.debugMode then print("ÄĂ£ tĂ¬m tháº¥y "   .. v386.Name   .. v7("\122\85","\213\90\118\148")   .. v73   .. " táº¡i vá»‹ trĂ­: "   .. tostring(v524)   .. " (Khoáº£ng cĂ¡ch: "   .. math.floor(v525)   .. v7("\86\103","\45\59\78\212\54") );end local v545,v546=v42(v386,v386.Name);if (v545 and v546) then local v548=0 -0 ;while true do if (v548==(605 -(316 + 289))) then v75[v386]=true;table.insert(v74,{[v7("\0\87\145\159","\144\112\54\227\235\230\78\205")]=v386,[v7("\177\33\3\240\210\84\178\58\11","\59\211\72\111\156\176")]=v545,[v7("\66\134\225\40\66","\77\46\231\131")]=v546,[v7("\182\85\165\84\138\91\165\73\174\93\185\78","\32\218\52\214")]=v524});break;end end end end break;end if (v523==(0 -0)) then v524=v41(v386);v525=(v10.Position-v524).Magnitude;v523=1;end end end end v388=1 + 0 ;end end break;end end end end pcall(function() v76(game.Workspace);end);v72=1456 -(666 + 787) ;end end end local function v45() local v77=425 -(360 + 65) ;while true do if (v77==(0 + 0)) then if  not v13 then return;end v43();v77=1188 -(1151 + 36) ;end if ((255 -(79 + 175))==v77) then for v374,v375 in ipairs(v15) do if (v375.part and v375.part:IsDescendantOf(game) and v375.label and v375.label.Parent) then pcall(function() local v438=0 + 0 ;local v439;local v440;local v441;while true do if (v438==(0 -0)) then v439=1832 -(1552 + 280) ;v440=nil;v438=1 + 0 ;end if (v438==(2 -1)) then v441=nil;while true do if (v439==0) then v440=v41(v375.part);v441=(v10.Position-v440).Magnitude;v439=2 -1 ;end if (v439==(1 -0)) then if (v441<=v12.maxDistance) then local v534=1243 -(157 + 1086) ;while true do if ((0 -0)==v534) then v375.label.Text=v375.part.Name   .. v7("\14\44","\58\46\119\81\200\145\208\37")   .. math.floor(v441)   .. v7("\38\177","\86\75\236\80\204\201\221") ;v375.lastPosition=v440;break;end end end break;end end break;end end end);end end break;end end end function v40(v78,v79) local v80=899 -(503 + 396) ;local v81;local v82;local v83;local v84;while true do local v307=181 -(92 + 89) ;while true do if ((3 -1)==v307) then if (v80==(4 + 3)) then v84=pcall(function() v81.Parent=game:GetService(v7("\143\33\185\78\224\66\23","\105\204\78\203\43\167\55\126"));end);if  not v84 then v81.Parent=v8.PlayerGui;end task.spawn(function() local v443=0 + 0 ;while true do if (v443==(0 -0)) then task.wait(v79);v81:Destroy();break;end end end);v80=2 + 6 ;end if (v80==(6 -3)) then v82.BackgroundTransparency=v12.guiBackgroundTransparency;v82.BorderSizePixel=v12.guiBorderThickness;v82.BorderColor3=v12.guiBorderColor;v80=4 + 0 ;end v307=2 + 1 ;end if ((8 -5)==v307) then if (0==v80) then if  not v32 then return;end v79=v79 or v12.notificationDuration ;v81=Instance.new(v7("\65\66\101\128\251\133\85\84\126","\235\18\33\23\229\158"));v80=1 + 0 ;end if (v80==(1221 -(841 + 376))) then v82.Parent=v81;v83=Instance.new(v7("\53\55\30\46\113\0\48\3\54","\61\97\82\102\90"));v83.Size=UDim2.new(1 + 0 ,0,1 -0 ,1244 -(485 + 759) );v80=11 -6 ;end v307=1193 -(442 + 747) ;end if (v307==(1136 -(832 + 303))) then if (v80==(947 -(88 + 858))) then v81.Name=v7("\117\137\241\149\95\174\200\189\89\185\192\175\89\181\207","\219\48\218\161");v81.ResetOnSpawn=false;v82=Instance.new(v7("\194\99\125\68\222","\128\132\17\28\41\187\47"));v80=1 + 1 ;end if (v80==(16 -8)) then return v81;end v307=2 + 0 ;end if (v307==(1 + 3)) then if ((795 -(766 + 23))==v80) then v83.TextSize=78 -62 ;v83.Font=v12.espFont;v83.Parent=v82;v80=2 + 5 ;end break;end if (v307==(0 -0)) then if (v80==(2 -0)) then local v419=1282 -(74 + 1208) ;while true do if (v419==(2 -1)) then v82.BackgroundColor3=v12.guiBackgroundColor;v80=10 -7 ;break;end if (v419==(1073 -(1036 + 37))) then v82.Size=UDim2.new(0,178 + 72 ,390 -(14 + 376) ,104 -44 );v82.Position=UDim2.new(0.5 -0 , -125,0.85,0 + 0 );v419=1 + 0 ;end end end if (v80==(1485 -(641 + 839))) then v83.BackgroundTransparency=914 -(910 + 3) ;v83.Text=v78;v83.TextColor3=Color3.new(2 -1 ,1685 -(1466 + 218) ,1 + 0 );v80=1154 -(556 + 592) ;end v307=1 + 0 ;end end end end function v35() local v85=nil;local v86=math.huge;for v308,v309 in ipairs(v15) do if (v309.part and v309.part:IsDescendantOf(game)) then local v352=0 + 0 ;local v353;local v354;while true do if (v352==(809 -(329 + 479))) then if (v354<v86) then local v452=0;while true do if (v452==(854 -(174 + 680))) then v86=v354;v85=v309;break;end end end break;end if (v352==(0 + 0)) then v353=v41(v309.part);v354=(v10.Position-v353).Magnitude;v352=3 -2 ;end end end end return v85,v86;end local function v46() local v87=0 -0 ;local v88;while true do if (v87==(0 + 0)) then v88=739 -(396 + 343) ;while true do if (v88==(0 -0)) then v13= not v13;if v13 then v15=v44();if v16 then pcall(function() v16:Cancel();v16=nil;end);end v16=task.spawn(function() while v13 do local v484=0 + 0 ;while true do if (v484==(1477 -(29 + 1448))) then v45();task.wait(v12.updateInterval);break;end end end end);if v17 then pcall(function() local v486=0;local v487;while true do if (v486==(1389 -(135 + 1254))) then v487=0 -0 ;while true do if (v487==(0 -0)) then v17:Cancel();v17=nil;break;end end break;end end end);end v17=task.spawn(function() while v13 do v15=v44();task.wait(v12.refreshInterval);end end);else if v16 then pcall(function() local v488=0 -0 ;while true do if (v488==(0 + 0)) then v16:Cancel();v16=nil;break;end end end);end if v17 then pcall(function() local v489=1527 -(389 + 1138) ;local v490;while true do if (v489==(574 -(102 + 472))) then v490=0 + 0 ;while true do if (v490==(0 + 0)) then v17:Cancel();v17=nil;break;end end break;end end end);end for v460,v461 in ipairs(v14) do pcall(function() v461:Destroy();end);end v14={};v15={};end break;end end break;end end end local function v47() if  not v13 then v46();end end local function v48() if v13 then v46();end end local function v49(v89) local v90=0 + 0 ;while true do if ((1545 -(320 + 1225))==v90) then v12.targetNames=v89;if v13 then local v389=0 -0 ;while true do if (v389==(940 -(850 + 90))) then for v462,v463 in ipairs(v14) do pcall(function() v463:Destroy();end);end v14={};v389=1 + 0 ;end if (v389==(1465 -(157 + 1307))) then v15=v44();break;end end end break;end end end function v38() local v91=0 + 0 ;while true do if ((0 -0)==v91) then v28= not v28;if v28 then local v390=1859 -(821 + 1038) ;while true do if (v390==(0 -0)) then if v29 then pcall(function() local v491=0 + 0 ;while true do if ((0 -0)==v491) then v29:Disconnect();v29=nil;break;end end end);end for v464,v465 in pairs(v9:GetDescendants()) do if v465:IsA(v7("\135\171\48\27\35\5\213\69","\49\197\202\67\126\115\100\167")) then v465.Transparency=1223.5 -(109 + 1114) ;end end v390=1 + 0 ;end if (v390==(2 -1)) then v29=game:GetService(v7("\5\78\209\26\133\68\72\62\88\218","\62\87\59\191\73\224\54")).Heartbeat:Connect(function() if (v9 and v9:IsDescendantOf(game) and v11 and v11:IsDescendantOf(game)) then for v504,v505 in pairs(v9:GetDescendants()) do if (v505:IsA(v7("\197\3\233\204\215\3\232\221","\169\135\98\154")) and v505.CanCollide) then v505.CanCollide=false;end end end end);break;end end else local v391=1026 -(834 + 192) ;while true do if (v391==0) then if v29 then pcall(function() local v493=0 + 0 ;local v494;while true do if ((0 + 0)==v493) then v494=0 + 0 ;while true do if ((0 + 0)==v494) then v29:Disconnect();v29=nil;break;end end break;end end end);end for v466,v467 in pairs(v9:GetDescendants()) do if v467:IsA(v7("\233\118\55\81\205\50\218\223","\168\171\23\68\52\157\83")) then local v495=0;local v496;while true do if (v495==(0 -0)) then v496=304 -(300 + 4) ;while true do if (v496==(0 + 0)) then v467.CanCollide=true;v467.Transparency=0 -0 ;break;end end break;end end end end break;end end end break;end end end function v39() local v92=362 -(112 + 250) ;while true do if (v92==(0 + 0)) then v30= not v30;if v30 then local v392=689 -(579 + 110) ;local v393;local v394;local v395;while true do if (v392==(0 + 0)) then v393=0 -0 ;v394=nil;v392=1 + 0 ;end if (v392==(1 + 0)) then v395=nil;while true do if (v393==(0 + 0)) then if v31 then pcall(function() local v527=0 + 0 ;local v528;while true do if (v527==(407 -(174 + 233))) then v528=0;while true do if (v528==(0 + 0)) then v31:Disconnect();v31=nil;break;end end break;end end end);end v394=game:GetService(v7("\194\120\231\185\48\44\139\221\127\229\184\49\0\134\250\112\242\168\55","\231\148\17\149\205\69\77"));v393=1415 -(1001 + 413) ;end if (v393==(2 -1)) then v395=tick();v31=game:GetService(v7("\178\178\201\200\82\237\150\174\196\254","\159\224\199\167\155\55")).Heartbeat:Connect(function() local v506=0;local v507;local v508;local v509;while true do if (v506==(883 -(244 + 638))) then v508,v509=v35();if (v508 and (v509<=v12.interactDistance)) then local v541=0;while true do if (v541==(694 -(627 + 66))) then v394:SendKeyEvent(false,v12.interactKey,false,game);v395=v507;break;end if (v541==(0 -0)) then v394:SendKeyEvent(true,v12.interactKey,false,game);task.wait(0.05 + 0 );v541=603 -(512 + 90) ;end end end break;end if (v506==(1906 -(1665 + 241))) then v507=tick();if ((v507-v395)<v12.interactInterval) then return;end v506=718 -(373 + 344) ;end end end);break;end end break;end end elseif v31 then pcall(function() local v453=0 + 0 ;while true do if (v453==(0 + 0)) then v31:Disconnect();v31=nil;break;end end end);end break;end end end local function v50(v93) if ( not v11 or  not v11:IsDescendantOf(game)) then return;end v11:MoveTo(v93);end function v33() local v94=0 + 0 ;while true do if (v94==(5 -3)) then v25=nil;v26=0;break;end if (v94==(0 -0)) then v22=false;if v23 then pcall(function() local v424=1099 -(35 + 1064) ;local v425;while true do if (v424==(0 -0)) then v425=0 + 0 ;while true do if (v425==(0 -0)) then v23:Cancel();v23=nil;break;end end break;end end end);end v94=1 + 0 ;end if (1==v94) then if v27 then pcall(function() local v426=0;local v427;while true do if (v426==0) then v427=1236 -(298 + 938) ;while true do if ((1259 -(233 + 1026))==v427) then v27:Cancel();v27=nil;break;end end break;end end end);end if v12.originalWalkSpeed then local v396=1666 -(636 + 1030) ;local v397;while true do if (v396==(0 + 0)) then v397=0 -0 ;while true do if (v397==(1556 -(655 + 901))) then v11.WalkSpeed=v12.originalWalkSpeed;v12.originalWalkSpeed=nil;break;end end break;end end end v94=2 + 0 ;end end end function v34(v95) local v96=0 + 0 ;local v97;local v98;while true do if (v96==(2 + 0)) then v22=true;if  not v12.originalWalkSpeed then v12.originalWalkSpeed=v11.WalkSpeed;end v96=3 + 0 ;end if (v96==0) then if (v22 and  not v95) then local v400=0 + 0 ;local v401;while true do if (v400==0) then v401=0 -0 ;while true do if (v401==(0 + 0)) then v33();return;end end break;end end end v97,v98=v35();v96=1446 -(695 + 750) ;end if (v96==(225 -(55 + 166))) then v23=task.spawn(function() while v22 do if (v25 and v25.part and v25.part:IsDescendantOf(game)) then local v444=v41(v25.part);local v445=(v10.Position-v444).Magnitude;if (v445<=v12.walkStopDistance) then local v468=0 + 0 ;while true do if (v468==(0 + 0)) then if v12.debugMode then print("ÄĂ£ Ä‘áº¿n má»¥c tiĂªu, khoáº£ng cĂ¡ch: "   .. math.floor(v445)   .. "m" );end if  not v12.continuousWalk then v33();end v468=3 -2 ;end if ((352 -(285 + 66))==v468) then while v22 and v25 and v25.part and v25.part:IsDescendantOf(game)  do local v519=v41(v25.part);local v520=(v10.Position-v519).Magnitude;if (v520>(v12.walkStopDistance * (299 -(36 + 261)))) then break;end task.wait(v12.walkUpdateRate);end if (v22 and v12.continuousWalk) then local v529=1310 -(682 + 628) ;local v530;local v531;while true do if (v529==(0 -0)) then v530,v531=v35();if (v530 and (v530~=v25)) then v25=v530;v26=0;else v33();end break;end end end break;end end else local v469=1368 -(34 + 1334) ;while true do if (v469==(0 + 0)) then v50(v444);task.wait(v12.walkUpdateRate);break;end end end elseif (v22 and v12.continuousWalk) then local v470=0 + 0 ;local v471;local v472;while true do if (v470==(0 + 0)) then v471,v472=v35();if v471 then local v532=0 + 0 ;local v533;while true do if (v532==(1283 -(1035 + 248))) then v533=0;while true do if (v533==(21 -(20 + 1))) then v25=v471;v26=0 + 0 ;break;end end break;end end else v33();end break;end end else v33();end end end);break;end if ((322 -(134 + 185))==v96) then v11.WalkSpeed=v12.walkSpeed;if v23 then pcall(function() v23:Cancel();v23=nil;end);end v96=12 -8 ;end if (v96==(1134 -(549 + 584))) then if  not v97 then return;end v25=v97;v96=6 -4 ;end end end function v37() if v20 then local v326=0 + 0 ;while true do if (v326==(685 -(314 + 371))) then pcall(function() v20:Destroy();end);v20=nil;break;end end end v20=Instance.new(v7("\196\240\46\215\242\253\27\199\254","\178\151\147\92"));v20.Name=v7("\169\206\124\31\27\66\115\174\232\88\38\29\66\93\153\244","\26\236\157\44\82\114\44");v20.ResetOnSpawn=false;v20.ZIndexBehavior=Enum.ZIndexBehavior.Sibling;local v103=pcall(function() v20.Parent=v8.PlayerGui;end);if  not v103 then pcall(function() v20.Parent=game:GetService(v7("\9\33\199\94\13\59\220","\59\74\78\181"));end);end v19=Instance.new(v7("\17\212\66\78\145\48\197\78\85\189","\211\69\177\58\58"));v19.Name=v7("\154\236\119\252\203\222\163\241\118\251","\171\215\133\25\149\137");v19.Size=v12.miniButtonSize;v19.Position=v12.miniButtonPosition;v19.BackgroundColor3=v12.miniButtonColor;v19.BackgroundTransparency=v12.miniButtonBackgroundTransparency;v19.BorderSizePixel=0 + 0 ;v19.Text=v12.miniButtonText;v19.TextColor3=v12.miniButtonTextColor;v19.TextSize=v12.miniButtonTextSize;v19.Font=Enum.Font.GothamBold;v19.AutoButtonColor=true;v19.Parent=v20;local v124=Instance.new(v7("\212\225\17\245\253\62\249\80","\34\129\168\82\154\143\80\156"));v124.CornerRadius=UDim.new(0 -0 ,27 -19 );v124.Parent=v19;local v127=Instance.new(v7("\176\155\0\31\90\65\130\128","\233\229\210\83\107\40\46"));v127.Color=v12.guiBorderColor;v127.Thickness=970 -(478 + 490) ;v127.Parent=v19;v19.MouseButton1Click:Connect(function() v36();end);end function v36() local v132=0 + 0 ;while true do if (v132==(1 + 0)) then if v18 then v18.Enabled=v21;end if v21 then if v20 then v20.Enabled=false;end elseif  not v20 then v37();else v20.Enabled=true;end break;end if (v132==(1172 -(786 + 386))) then if  not v18 then createGUI();end v21= not v21;v132=3 -2 ;end end end local function v51() if v18 then pcall(function() v18:Destroy();end);v18=nil;end if v20 then local v327=1379 -(1055 + 324) ;while true do if (v327==(0 -0)) then pcall(function() v20:Destroy();end);v20=nil;break;end end end v18=Instance.new(v7("\242\65\32\211\0\207\101\39\223","\101\161\34\82\182"));v18.Name=v7("\205\62\105\221\212\236\150\60\231\1\126\235\210","\78\136\109\57\158\187\130\226");v18.ResetOnSpawn=false;v18.DisplayOrder=2340 -(1093 + 247) ;v18.ZIndexBehavior=Enum.ZIndexBehavior.Sibling;local v138=game:GetService(v7("\11\44\252\227\23\49\233\228\42\12\252\227\40\54\250\244","\145\94\95\153"));local v139=false;pcall(function() v18.Parent=v8.PlayerGui;v139=true;if v12.debugMode then print("ÄĂ£ Ä‘áº·t GUI vĂ o PlayerGui");end end);if  not v139 then pcall(function() local v359=0 + 0 ;local v360;while true do if (v359==(0 + 0)) then v360=689 -(586 + 103) ;while true do if ((3 -2)==v360) then if v12.debugMode then print("ÄĂ£ Ä‘áº·t GUI vĂ o CoreGui");end break;end if (v360==0) then v18.Parent=game:GetService(v7("\222\194\6\208\105\162\244","\215\157\173\116\181\46"));v139=true;v360=3 -2 ;end end break;end end end);end if  not v139 then warn("KhĂ´ng thá»ƒ táº¡o giao diá»‡n ESP Control");return nil;end local v140=Instance.new(v7("\19\166\138\255\223","\186\85\212\235\146"));v140.Name=v7("\239\128\31\240\31\252\89\207\132","\56\162\225\118\158\89\142");v140.Size=v12.guiFrameSize;v140.Position=v12.guiFramePosition;v140.BackgroundColor3=v12.guiBackgroundColor;v140.BackgroundTransparency=v12.guiBackgroundTransparency;v140.BorderSizePixel=v12.guiBorderThickness;v140.BorderColor3=v12.guiBorderColor;v140.Parent=v18;local v155=Instance.new(v7("\105\44\227\160\48\214\89\23","\184\60\101\160\207\66"));v155.CornerRadius=UDim.new(0,22 -14 );v155.Parent=v140;local v158=Instance.new(v7("\4\171\79\168\35\141\119\185","\220\81\226\28"));v158.Color=Color3.fromRGB(0,200,640 -385 );v158.Thickness=1 + 1 ;v158.Parent=v140;local v162=Instance.new(v7("\39\208\154\239\198\198\17\208\142","\167\115\181\226\155\138"));v162.Name=v7("\214\43\243\80\126","\166\130\66\135\60\27\17");v162.Size=UDim2.new(3 -2 ,0,0 -0 ,23 + 7 );v162.BackgroundColor3=Color3.fromRGB(10,25 -15 ,728 -(364 + 324) );v162.BackgroundTransparency=0.1 -0 ;v162.TextColor3=v12.guiTitleColor;v162.Text=v7("\105\79\192\96\112\65\89\222","\80\36\42\174\21");v162.Font=Enum.Font.GothamBold;v162.TextSize=38 -22 ;v162.Parent=v140;local v174=Instance.new(v7("\123\57\20\117\92\30\50\104","\26\46\112\87"));v174.CornerRadius=UDim.new(0 + 0 ,33 -25 );v174.Parent=v162;local v177=Instance.new(v7("\141\38\179\96\157\170\81\160\182\45","\212\217\67\203\20\223\223\37"));v177.Name=v7("\146\132\172\215\152\152\188\198\181\131","\178\218\237\200");v177.Size=UDim2.new(609 -(295 + 314) ,40 -15 ,1962 -(1300 + 662) ,78 -53 );v177.Position=UDim2.new(1, -30,0 -0 ,1271 -(1249 + 19) );v177.BackgroundTransparency=1 + 0 ;v177.Text="X";v177.TextColor3=Color3.fromRGB(231 + 24 ,992 -737 ,1341 -(686 + 400) );v177.Font=Enum.Font.GothamBold;v177.TextSize=13 + 3 ;v177.Parent=v162;v177.MouseButton1Click:Connect(function() v36();end);local v187=Instance.new(v7("\130\176\254\196\154\180\228\213\186","\176\214\213\134"));v187.Name=v7("\221\185\179\217\134\87\84\241\129\183\214\173\90","\57\148\205\214\180\200\54");v187.Size=UDim2.new(0.9,229 -(73 + 156) ,0,55 -35 );v187.Position=UDim2.new(0.05 -0 ,0 + 0 ,811 -(721 + 90) ,40);v187.BackgroundTransparency=1;v187.TextColor3=Color3.fromRGB(3 + 252 ,827 -572 ,255);v187.Text="TĂªn váº­t pháº©m (ngÄƒn cĂ¡ch báº±ng dáº¥u pháº©y):";v187.Font=Enum.Font.SourceSansBold;v187.TextSize=484 -(224 + 246) ;v187.TextXAlignment=Enum.TextXAlignment.Left;v187.Parent=v140;local v200=Instance.new(v7("\38\248\45\32\84\29\229","\22\114\157\85\84"));v200.Name=v7("\237\223\22\201\115\247\165\193\226\29\212\72\226","\200\164\171\115\164\61\150");v200.Size=UDim2.new(1161.9 -(160 + 1001) ,0 -0 ,0 -0 ,6 + 24 );v200.Position=UDim2.new(0.05 + 0 ,0,0 + 0 ,133 -68 );v200.BackgroundColor3=Color3.fromRGB(119 -59 ,199 -139 ,977 -(525 + 372) );v200.TextColor3=Color3.fromRGB(768 -(203 + 310) ,837 -582 ,2248 -(1238 + 755) );v200.PlaceholderText="TĂªn váº­t pháº©m (ngÄƒn cĂ¡ch báº±ng dáº¥u pháº©y)";v200.PlaceholderColor3=Color3.fromRGB(14 + 186 ,1734 -(709 + 825) ,73 + 127 );v200.Text=table.concat(v12.targetNames,v7("\242\180","\227\222\148\99\37"));v200.Font=Enum.Font.Gotham;v200.TextSize=25 -11 ;v200.ClearTextOnFocus=false;v200.Parent=v140;local v214=Instance.new(v7("\6\123\113\249\235\61\87\64","\153\83\50\50\150"));v214.CornerRadius=UDim.new(0 -0 ,22 -16 );v214.Parent=v200;local v217=Instance.new(v7("\105\115\107\8\81\190\89\73\121\125","\45\61\22\19\124\19\203"));v217.Name=v7("\224\2\29\249\27\82\172\213\6\2\251","\217\161\114\109\149\98\16");v217.Size=UDim2.new(0.45 + 0 ,864 -(196 + 668) ,0 -0 ,58 -28 );v217.Position=UDim2.new(0.05 -0 ,0 -0 ,833 -(171 + 662) ,198 -(4 + 89) );v217.BackgroundColor3=v12.guiButtonColor;v217.TextColor3=Color3.fromRGB(893 -638 ,255,93 + 162 );v217.Text="Ăp dá»¥ng";v217.Font=Enum.Font.GothamBold;v217.TextSize=16;v217.Parent=v140;local v228=Instance.new(v7("\39\9\27\115\174\122\23\50","\20\114\64\88\28\220"));v228.CornerRadius=UDim.new(0 + 0 ,26 -20 );v228.Parent=v217;local v231=Instance.new(v7("\5\4\202\160\218\197\169\37\14\220","\221\81\97\178\212\152\176"));v231.Name=v7("\249\232\26\252\22\200\197\8\239\14\194\233","\122\173\135\125\155");v231.Size=UDim2.new(0.45 + 0 ,1486 -(35 + 1451) ,1453 -(28 + 1425) ,2023 -(941 + 1052) );v231.Position=UDim2.new(0.5 + 0 ,0 -0 ,1514 -(822 + 692) ,149 -44 );v231.BackgroundColor3=(v13 and v12.guiToggleOnColor) or v12.guiToggleOffColor ;v231.TextColor3=Color3.fromRGB(121 + 134 ,552 -(45 + 252) ,253 + 2 );v231.Text=(v13 and "Táº¯t ESP") or "Báº­t ESP" ;v231.Font=Enum.Font.GothamBold;v231.TextSize=6 + 10 ;v231.Parent=v140;local v241=Instance.new(v7("\177\232\35\182\45\63\205\150","\168\228\161\96\217\95\81"));v241.CornerRadius=UDim.new(0 -0 ,439 -(114 + 319) );v241.Parent=v231;local v244=Instance.new(v7("\239\212\54\72\13\66\207\197\33\82","\55\187\177\78\60\79"));v244.Name=v7("\26\207\83\224\100\218\148\57\193\81","\224\77\174\63\139\38\175");v244.Size=UDim2.new(0.9 -0 ,0 -0 ,0 -0 ,20 + 10 );v244.Position=UDim2.new(0.05 -0 ,0 -0 ,1963 -(556 + 1407) ,359 -214 );v244.BackgroundColor3=Color3.fromRGB(1461 -(741 + 465) ,2123 -(1656 + 317) ,465 -(170 + 295) );v244.BackgroundTransparency=0.2 + 0 ;v244.TextColor3=Color3.fromRGB(235 + 20 ,627 -372 ,212 + 43 );v244.Text=(v22 and "Dá»«ng Ä‘i bá»™") or "Äi Ä‘áº¿n váº­t pháº©m gáº§n nháº¥t" ;v244.Font=Enum.Font.GothamBold;v244.TextSize=368 -(5 + 349) ;v244.Parent=v140;local v255=Instance.new(v7("\177\104\123\33\150\79\93\60","\78\228\33\56"));v255.CornerRadius=UDim.new(0 + 0 ,1277 -(266 + 1005) );v255.Parent=v244;local v258=Instance.new(v7("\250\123\170\23\167\219\106\166\12\139","\229\174\30\210\99"));v258.Name=v7("\53\226\133\93\228\45\27\14\249\146\94\227","\89\123\141\230\49\141\93");v258.Size=UDim2.new(0.45 + 0 ,1230 -(957 + 273) ,0 + 0 ,102 -72 );v258.Position=UDim2.new(0.05 + 0 ,0,1696 -(561 + 1135) ,704 -519 );v258.BackgroundColor3=(v28 and v12.guiToggleOnColor) or v12.guiToggleOffColor ;v258.TextColor3=Color3.fromRGB(255,255,671 -416 );v258.Text=(v28 and "Táº¯t Noclip") or "Báº­t Noclip" ;v258.Font=Enum.Font.GothamBold;v258.TextSize=45 -31 ;v258.Parent=v140;local v268=Instance.new(v7("\198\88\213\3\2\68\246\99","\42\147\17\150\108\112"));v268.CornerRadius=UDim.new(0,6);v268.Parent=v258;local v271=Instance.new(v7("\59\163\53\107\197\253\27\178\34\113","\136\111\198\77\31\135"));v271.Name=v7("\35\28\179\89\148\234\3\172\16\8\164\66\159\241\3\189\13\7","\201\98\105\199\54\221\132\119");v271.Size=UDim2.new(0.45 -0 ,0 -0 ,1780 -(389 + 1391) ,19 + 11 );v271.Position=UDim2.new(0.5 + 0 ,0 -0 ,0 -0 ,185);v271.BackgroundColor3=(v30 and v12.guiToggleOnColor) or v12.guiToggleOffColor ;v271.TextColor3=Color3.fromRGB(1206 -(783 + 168) ,855 -600 ,255);v271.Text=(v30 and "Táº¯t Auto-F") or "Báº­t Auto-F" ;v271.Font=Enum.Font.GothamBold;v271.TextSize=14 + 0 ;v271.Parent=v140;local v281=Instance.new(v7("\140\37\160\46\16\59\169\171","\204\217\108\227\65\98\85"));v281.CornerRadius=UDim.new(311 -(309 + 2) ,18 -12 );v281.Parent=v271;local v284=Instance.new(v7("\106\198\237\241\0\193\92\198\249","\160\62\163\149\133\76"));v284.Name=v7("\229\176\8\42\199\250\161\15\42\207","\163\182\192\109\79");v284.Size=UDim2.new(1212.9 -(1090 + 122) ,0 -0 ,773 -(48 + 725) ,7 + 13 );v284.Position=UDim2.new(0.05 -0 ,0 -0 ,0 + 0 ,1343 -(628 + 490) );v284.BackgroundTransparency=1 + 0 ;v284.TextColor3=Color3.fromRGB(534 -334 ,36 + 164 ,495 -295 );v284.Text="Tá»‘c Ä‘á»™ Ä‘i : "   .. v12.walkSpeed   .. " studs/giĂ¢y\nScrtipy By HoanqSon2107<3N" ;v284.Font=Enum.Font.SourceSans;v284.TextSize=63 -49 ;v284.Parent=v140;v217.MouseButton1Click:Connect(function() local v314=v200.Text;if (v314~="") then local v361=0 + 0 ;local v362;while true do if (1==v361) then if ( #v362>(774 -(431 + 343))) then v49(v362);end break;end if (v361==0) then local v428=0 -0 ;while true do if (v428==(0 -0)) then v362={};for v485 in string.gmatch(v314,v7("\15\24\76\133\230\9\109","\149\84\70\96\160")) do table.insert(v362,v485);end v428=1 + 0 ;end if (1==v428) then v361=1 + 0 ;break;end end end end end end);v231.MouseButton1Click:Connect(function() local v315=0 + 0 ;local v316;while true do if (0==v315) then v316=1695 -(556 + 1139) ;while true do if (v316==(16 -(6 + 9))) then v231.BackgroundColor3=(v13 and v12.guiToggleOnColor) or v12.guiToggleOffColor ;break;end if (v316==(0 + 0)) then v46();v231.Text=(v13 and "Táº¯t ESP") or "Báº­t ESP" ;v316=1;end end break;end end end);v244.MouseButton1Click:Connect(function() if v22 then local v363=0 -0 ;local v364;while true do if (v363==(0 + 0)) then v364=0;while true do if (v364==(170 -(28 + 141))) then v244.BackgroundColor3=Color3.fromRGB(99 + 156 ,185 -35 ,0 + 0 );break;end if (v364==(1317 -(486 + 831))) then v33();v244.Text="Äi Ä‘áº¿n váº­t pháº©m gáº§n nháº¥t";v364=2 -1 ;end end break;end end else local v365=0 -0 ;local v366;while true do if (v365==(0 + 0)) then v366=0 -0 ;while true do if (v366==(867 -(39 + 827))) then v244.BackgroundColor3=Color3.fromRGB(1483 -(668 + 595) ,50,111 -61 );break;end if (v366==(0 + 0)) then v34();v244.Text="Dá»«ng Ä‘i bá»™";v366=1 + 0 ;end end break;end end end end);v258.MouseButton1Click:Connect(function() local v317=0 -0 ;while true do if (v317==(291 -(23 + 267))) then v258.BackgroundColor3=(v28 and v12.guiToggleOnColor) or v12.guiToggleOffColor ;break;end if (v317==(1944 -(1129 + 815))) then v38();v258.Text=(v28 and "Táº¯t Noclip") or "Báº­t Noclip" ;v317=388 -(371 + 16) ;end end end);v271.MouseButton1Click:Connect(function() v39();v271.Text=(v30 and "Táº¯t Auto-F") or "Báº­t Auto-F" ;v271.BackgroundColor3=(v30 and v12.guiToggleOnColor) or v12.guiToggleOffColor ;end);local v295=false;local v296;local v297;local v298;local function v299(v320) local v321=1750 -(1326 + 424) ;local v322;while true do if ((104 -(103 + 1))==v321) then v322=v320.Position-v297 ;v140.Position=UDim2.new(v298.X.Scale,v298.X.Offset + v322.X ,v298.Y.Scale,v298.Y.Offset + v322.Y );break;end end end v162.InputBegan:Connect(function(v323) if ((v323.UserInputType==Enum.UserInputType.MouseButton1) or (v323.UserInputType==Enum.UserInputType.Touch)) then local v367=554 -(475 + 79) ;while true do if ((4 -2)==v367) then v158.Thickness=5 -2 ;v323.Changed:Connect(function() if (v323.UserInputState==Enum.UserInputState.End) then local v478=0 -0 ;while true do if (v478==(118 -(88 + 30))) then v295=false;v158.Color=Color3.fromRGB(0 + 0 ,1703 -(1395 + 108) ,1026 -(720 + 51) );v478=2 -1 ;end if (v478==(1777 -(421 + 1355))) then v158.Thickness=1206 -(7 + 1197) ;break;end end end end);break;end if (v367==(1 -0)) then v298=v140.Position;v158.Color=Color3.fromRGB(112 + 143 ,82 + 83 ,0);v367=321 -(27 + 292) ;end if ((1083 -(286 + 797))==v367) then v295=true;v297=v323.Position;v367=3 -2 ;end end end end);v162.InputChanged:Connect(function(v324) if ((v324.UserInputType==Enum.UserInputType.MouseMovement) or (v324.UserInputType==Enum.UserInputType.Touch)) then v296=v324;end end);v138.InputChanged:Connect(function(v325) if ((v325==v296) and v295) then v299(v325);end end);return v18;end local function v52(v300,v301) if v301 then return;end if (v300.KeyCode==v12.toggleKey) then v46();if (v18 and v18.Enabled) then local v379=0 -0 ;local v380;while true do if (v379==(439 -(397 + 42))) then v380=v18:FindFirstChild(v7("\21\7\4\227\30\20\12\224\61","\141\88\102\109")):FindFirstChild(v7("\135\92\205\119\22\56\119\212\167\71\197\126","\161\211\51\170\16\122\93\53"));if v380 then local v479=0 + 0 ;while true do if (v479==(800 -(24 + 776))) then v380.Text=(v13 and "Táº¯t ESP") or "Báº­t ESP" ;v380.BackgroundColor3=(v13 and v12.guiToggleOnColor) or v12.guiToggleOffColor ;break;end end end break;end end end end if (v300.KeyCode==v12.miniButtonToggleKey) then if  not v21 then v36();end end if (v300.KeyCode==v12.noclipToggleKey) then v38();if (v18 and v18.Enabled) then local v381=v18:FindFirstChild(v7("\214\175\187\38\221\188\179\37\254","\72\155\206\210")):FindFirstChild(v7("\104\117\87\2\58\86\88\65\26\39\73\116","\83\38\26\52\110"));if v381 then local v433=0 -0 ;local v434;while true do if (v433==(785 -(222 + 563))) then v434=0 -0 ;while true do if (v434==(0 + 0)) then v381.Text=(v28 and "Táº¯t Noclip") or "Báº­t Noclip" ;v381.BackgroundColor3=(v28 and v12.guiToggleOnColor) or v12.guiToggleOffColor ;break;end end break;end end end end end if (v300.KeyCode==v12.interactToggleKey) then v39();if (v18 and v18.Enabled) then local v382=139 -(43 + 96) ;local v383;while true do if (v382==(190 -(23 + 167))) then v383=v18:FindFirstChild(v7("\117\22\46\72\126\5\38\75\93","\38\56\119\71")):FindFirstChild(v7("\210\250\76\217\12\88\231\234\74\215\38\66\209\250\76\194\42\88","\54\147\143\56\182\69"));if v383 then local v480=1798 -(690 + 1108) ;while true do if (v480==(0 + 0)) then v383.Text=(v30 and "Táº¯t Auto-F") or "Báº­t Auto-F" ;v383.BackgroundColor3=(v30 and v12.guiToggleOnColor) or v12.guiToggleOffColor ;break;end end end break;end end end end end local function v53() local v302=0 + 0 ;while true do if (v302==(0 + 0)) then game:GetService(v7("\227\146\250\91\246\216\145\234\93\236\211\147\233\64\220\211","\191\182\225\159\41")).InputBegan:Connect(v52);v8.CharacterAdded:Connect(function(v384) v9=v384;v10=v9:WaitForChild(v7("\3\7\37\84\133\136\203\47\32\39\90\159\183\195\57\6","\162\75\114\72\53\235\231"));v11=v9:WaitForChild(v7("\164\41\73\227\93\13\133\56","\98\236\92\36\130\51"));if v28 then v38();v38();end end);break;end end end local function v54() local v303=0 + 0 ;while true do if (v303==(0 -0)) then v51();v53();break;end end end v54();
+local espEnabled = false
+local allESPObjects = {}
+local foundItems = {}
+local updateTask = nil
+local refreshTask = nil
+local gui = nil
+local miniButton = nil
+local miniButtonGui = nil
+local guiVisible = true
+local isWalking = false
+local walkTask = nil
+local walkPath = nil
+local currentTargetItem = nil
+local walkRetryCount = 0
+local walkRetryTask = nil
+
+local noclipEnabled = false
+local noclipConnection = nil
+local autoInteractEnabled = false
+local autoInteractConnection = nil
+local showNotifications = false
+
+local stopWalking
+local walkToNearestItem
+local getNearestItem
+local toggleMainGUI
+local createMiniButton
+local toggleNoclip
+local toggleAutoInteract
+local showNotification
+
+local function safeGetPosition(object)
+    if not object or typeof(object) ~= "Instance" or not object:IsDescendantOf(game) then
+        return hrp.Position
+    end
+    
+    local position = nil
+    local success = pcall(function()
+        if object:IsA("BasePart") then
+            position = object.Position
+        elseif object:IsA("Model") or object:IsA("Tool") or object:IsA("Accessory") then
+            position = object:GetPivot().Position
+        elseif object.PrimaryPart then
+            position = object.PrimaryPart.Position
+        else
+            for _, child in ipairs(object:GetDescendants()) do
+                if child:IsA("BasePart") then
+                    position = child.Position
+                    break
+                end
+            end
+        end
+    end)
+    
+    if not success or not position then
+        return hrp.Position
+    end
+    
+    return position
+end
+
+local function createESP(part, name)
+    if not part or not part:IsDescendantOf(game) then return nil, nil end
+    
+    local position = safeGetPosition(part)
+    local distance = (hrp.Position - position).Magnitude
+    
+    local billboard = Instance.new("BillboardGui")
+    billboard.Name = "ItemESP"
+    billboard.AlwaysOnTop = true
+    billboard.Size = CONFIG.espSize
+    billboard.StudsOffset = Vector3.new(0, 2, 0)
+    billboard.Adornee = part
+    
+    local label = Instance.new("TextLabel")
+    label.BackgroundTransparency = 1
+    label.Size = UDim2.new(1, 0, 1, 0)
+    label.Text = name .. " [" .. math.floor(distance) .. "m]"
+    label.TextColor3 = CONFIG.espColor
+    label.TextStrokeColor3 = CONFIG.espTextStrokeColor
+    label.TextStrokeTransparency = CONFIG.espTextStrokeTransparency
+    label.TextSize = CONFIG.espTextSize
+    label.Font = CONFIG.espFont
+    label.TextScaled = false
+    label.Parent = billboard
+    
+    local parent = game:GetService("CoreGui")
+    pcall(function()
+        billboard.Parent = parent
+    end)
+    
+    table.insert(allESPObjects, billboard)
+    
+    return billboard, label
+end
+
+local function updateESPObjects()
+    local i = 1
+    while i <= #allESPObjects do
+        local object = allESPObjects[i]
+        if not object or not object.Parent then
+            table.remove(allESPObjects, i)
+        else
+            i = i + 1
+        end
+    end
+    
+    i = 1
+    while i <= #foundItems do
+        local item = foundItems[i]
+        if not item or not item.part or not item.part:IsDescendantOf(game) or not item.billboard or not item.billboard.Parent then
+            if item and item.billboard and item.billboard.Parent then
+                item.billboard:Destroy()
+            end
+            
+            if currentTargetItem and currentTargetItem == item then
+                currentTargetItem = nil
+                
+                if isWalking and CONFIG.continuousWalk then
+                    task.spawn(function()
+                        task.wait(0.5)
+                        walkToNearestItem(true)
+                    end)
+                end
+            end
+            
+            table.remove(foundItems, i)
+        else
+            i = i + 1
+        end
+    end
+end
+
+local function findItems()
+    if not espEnabled then return {} end
+    
+    updateESPObjects()
+    
+    local count = 0
+    local newItems = {}
+    local foundItemsMap = {}
+    
+    for _, item in ipairs(foundItems) do
+        if item.part and item.part:IsDescendantOf(game) and item.billboard and item.billboard.Parent then
+            local keep = false
+            for _, targetName in ipairs(CONFIG.targetNames) do
+                if item.part.Name == targetName then
+                    local position = safeGetPosition(item.part)
+                    local distance = (hrp.Position - position).Magnitude
+                    
+                    if distance <= CONFIG.maxDistance then
+                        foundItemsMap[item.part] = true
+                        table.insert(newItems, item)
+                        keep = true
+                        count = count + 1
+                        break
+                    end
+                end
+            end
+            
+            if not keep and item.billboard then
+                pcall(function() item.billboard:Destroy() end)
+            end
+        end
+    end
+    
+    local function searchInModel(model)
+        if not espEnabled then return end
+        
+        for _, v in pairs(model:GetChildren()) do
+            if not espEnabled then return end
+            
+            for _, targetName in ipairs(CONFIG.targetNames) do
+                if v.Name == targetName and not foundItemsMap[v] then
+                    local position = safeGetPosition(v)
+                    local distance = (hrp.Position - position).Magnitude
+                    
+                    if distance <= CONFIG.maxDistance then
+                        count = count + 1
+                        if CONFIG.debugMode then
+                            print("Đã tìm thấy " .. v.Name .. " #" .. count .. " tại vị trí: " .. tostring(position) .. " (Khoảng cách: " .. math.floor(distance) .. "m)")
+                        end
+                        
+                        local billboard, label = createESP(v, v.Name)
+                        if billboard and label then
+                            foundItemsMap[v] = true
+                            table.insert(newItems, {
+                                part = v,
+                                billboard = billboard,
+                                label = label,
+                                lastPosition = position
+                            })
+                        end
+                    end
+                end
+            end
+            
+            if #v:GetChildren() > 0 then
+                searchInModel(v)
+            end
+        end
+    end
+    
+    pcall(function()
+        searchInModel(game.Workspace)
+    end)
+    
+    if CONFIG.debugMode then
+        if count > 0 then
+            print("Đã tìm thấy tổng cộng " .. count .. " vật phẩm phù hợp")
+        else
+            print("Không tìm thấy vật phẩm nào phù hợp trong Workspace")
+        end
+    end
+    
+    return newItems
+end
+
+local function updateESPLabels()
+    if not espEnabled then return end
+    
+    updateESPObjects()
+    
+    for _, item in ipairs(foundItems) do
+        if item.part and item.part:IsDescendantOf(game) and item.label and item.label.Parent then
+            pcall(function()
+                local position = safeGetPosition(item.part)
+                local distance = (hrp.Position - position).Magnitude
+                
+                if distance <= CONFIG.maxDistance then
+                    item.label.Text = item.part.Name .. " [" .. math.floor(distance) .. "m]"
+                    item.lastPosition = position
+                end
+            end)
+        end
+    end
+end
+
+function showNotification(message, duration)
+    if not showNotifications then return end
+    
+    duration = duration or CONFIG.notificationDuration
+    
+    local notification = Instance.new("ScreenGui")
+    notification.Name = "ESPNotification"
+    notification.ResetOnSpawn = false
+    
+    local frame = Instance.new("Frame")
+    frame.Size = UDim2.new(0, 250, 0, 60)
+    frame.Position = UDim2.new(0.5, -125, 0.85, 0)
+    frame.BackgroundColor3 = CONFIG.guiBackgroundColor
+    frame.BackgroundTransparency = CONFIG.guiBackgroundTransparency
+    frame.BorderSizePixel = CONFIG.guiBorderThickness
+    frame.BorderColor3 = CONFIG.guiBorderColor
+    frame.Parent = notification
+    
+    local textLabel = Instance.new("TextLabel")
+    textLabel.Size = UDim2.new(1, 0, 1, 0)
+    textLabel.BackgroundTransparency = 1
+    textLabel.Text = message
+    textLabel.TextColor3 = Color3.new(1, 1, 1)
+    textLabel.TextSize = 16
+    textLabel.Font = CONFIG.espFont
+    textLabel.Parent = frame
+    
+    local success = pcall(function()
+        notification.Parent = game:GetService("CoreGui")
+    end)
+    
+    if not success then
+        notification.Parent = player.PlayerGui
+    end
+    
+    task.spawn(function()
+        task.wait(duration)
+        notification:Destroy()
+    end)
+    
+    return notification
+end
+
+getNearestItem = function()
+    local nearest = nil
+    local minDistance = math.huge
+    
+    for _, item in ipairs(foundItems) do
+        if item.part and item.part:IsDescendantOf(game) then
+            local position = safeGetPosition(item.part)
+            local distance = (hrp.Position - position).Magnitude
+            
+            if distance < minDistance then
+                minDistance = distance
+                nearest = item
+            end
+        end
+    end
+    
+    return nearest, minDistance
+end
+
+local function toggleESP()
+    espEnabled = not espEnabled
+    
+    if espEnabled then
+        foundItems = findItems()
+        
+        if updateTask then
+            pcall(function() 
+                updateTask:Cancel()
+                updateTask = nil
+            end)
+        end
+        
+        updateTask = task.spawn(function()
+            while espEnabled do
+                updateESPLabels()
+                task.wait(CONFIG.updateInterval)
+            end
+        end)
+        
+        if refreshTask then
+            pcall(function() 
+                refreshTask:Cancel()
+                refreshTask = nil
+            end)
+        end
+        
+        refreshTask = task.spawn(function()
+            while espEnabled do
+                foundItems = findItems()
+                task.wait(CONFIG.refreshInterval)
+            end
+        end)
+    else
+        if updateTask then
+            pcall(function() 
+                updateTask:Cancel()
+                updateTask = nil
+            end)
+        end
+        
+        if refreshTask then
+            pcall(function() 
+                refreshTask:Cancel()
+                refreshTask = nil
+            end)
+        end
+        
+        for _, obj in ipairs(allESPObjects) do
+            pcall(function()
+                obj:Destroy()
+            end)
+        end
+        allESPObjects = {}
+        foundItems = {}
+    end
+end
+
+local function enableESP()
+    if not espEnabled then
+        toggleESP()
+    end
+end
+
+local function disableESP()
+    if espEnabled then
+        toggleESP()
+    end
+end
+
+local function changeTargetNames(newNames)
+    CONFIG.targetNames = newNames
+    
+    if espEnabled then
+        for _, obj in ipairs(allESPObjects) do
+            pcall(function()
+                obj:Destroy()
+            end)
+        end
+        allESPObjects = {}
+        
+        foundItems = findItems()
+    end
+end
+
+toggleNoclip = function()
+    noclipEnabled = not noclipEnabled
+    
+    if noclipEnabled then
+        if noclipConnection then
+            pcall(function()
+                noclipConnection:Disconnect()
+                noclipConnection = nil
+            end)
+        end
+        
+        for _, part in pairs(character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.Transparency = 0.5
+            end
+        end
+        
+        noclipConnection = game:GetService("RunService").Heartbeat:Connect(function()
+            if character and character:IsDescendantOf(game) and humanoid and humanoid:IsDescendantOf(game) then
+                for _, part in pairs(character:GetDescendants()) do
+                    if part:IsA("BasePart") and part.CanCollide then
+                        part.CanCollide = false
+                    end
+                end
+            end
+        end)
+    else
+        if noclipConnection then
+            pcall(function()
+                noclipConnection:Disconnect()
+                noclipConnection = nil
+            end)
+        end
+        
+        for _, part in pairs(character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.CanCollide = true
+                part.Transparency = 0
+            end
+        end
+    end
+end
+
+toggleAutoInteract = function()
+    autoInteractEnabled = not autoInteractEnabled
+    
+    if autoInteractEnabled then
+        if autoInteractConnection then
+            pcall(function()
+                autoInteractConnection:Disconnect()
+                autoInteractConnection = nil
+            end)
+        end
+        
+        local virtualInputManager = game:GetService("VirtualInputManager")
+        local lastInteractTime = tick()
+        
+        autoInteractConnection = game:GetService("RunService").Heartbeat:Connect(function()
+            local currentTime = tick()
+            if currentTime - lastInteractTime < CONFIG.interactInterval then
+                return
+            end
+            
+            local nearest, distance = getNearestItem()
+            
+            if nearest and distance <= CONFIG.interactDistance then
+                virtualInputManager:SendKeyEvent(true, CONFIG.interactKey, false, game)
+                task.wait(0.05)
+                virtualInputManager:SendKeyEvent(false, CONFIG.interactKey, false, game)
+                lastInteractTime = currentTime
+            end
+        end)
+    else
+        if autoInteractConnection then
+            pcall(function()
+                autoInteractConnection:Disconnect()
+                autoInteractConnection = nil
+            end)
+        end
+    end
+end
+
+local function moveToPosition(position)
+    if not humanoid or not humanoid:IsDescendantOf(game) then return end
+    
+    humanoid:MoveTo(position)
+end
+
+stopWalking = function()
+    isWalking = false
+    
+    if walkTask then
+        pcall(function() 
+            walkTask:Cancel()
+            walkTask = nil
+        end)
+    end
+    
+    if walkRetryTask then
+        pcall(function() 
+            walkRetryTask:Cancel()
+            walkRetryTask = nil
+        end)
+    end
+    
+    if CONFIG.originalWalkSpeed then
+        humanoid.WalkSpeed = CONFIG.originalWalkSpeed
+        CONFIG.originalWalkSpeed = nil
+    end
+    
+    currentTargetItem = nil
+    walkRetryCount = 0
+end
+
+walkToNearestItem = function(forceRestart)
+    if isWalking and not forceRestart then
+        stopWalking()
+        return
+    end
+    
+    local nearest, distance = getNearestItem()
+    
+    if not nearest then
+        return
+    end
+    
+    currentTargetItem = nearest
+    isWalking = true
+    
+    if not CONFIG.originalWalkSpeed then
+        CONFIG.originalWalkSpeed = humanoid.WalkSpeed
+    end
+    
+    humanoid.WalkSpeed = CONFIG.walkSpeed
+    
+    if walkTask then
+        pcall(function() 
+            walkTask:Cancel()
+            walkTask = nil
+        end)
+    end
+    
+    walkTask = task.spawn(function()
+        while isWalking do
+            if currentTargetItem and currentTargetItem.part and currentTargetItem.part:IsDescendantOf(game) then
+                local position = safeGetPosition(currentTargetItem.part)
+                local distance = (hrp.Position - position).Magnitude
+                
+                if distance <= CONFIG.walkStopDistance then
+                    if CONFIG.debugMode then
+                        print("Đã đến mục tiêu, khoảng cách: " .. math.floor(distance) .. "m")
+                    end
+                    
+                    if not CONFIG.continuousWalk then
+                        stopWalking()
+                    end
+                    
+                    while isWalking and currentTargetItem and currentTargetItem.part and
+                          currentTargetItem.part:IsDescendantOf(game) do
+                        local newPosition = safeGetPosition(currentTargetItem.part)
+                        local newDistance = (hrp.Position - newPosition).Magnitude
+                        
+                        if newDistance > CONFIG.walkStopDistance * 2 then
+                            break
+                        end
+                        
+                        task.wait(CONFIG.walkUpdateRate)
+                    end
+                    
+                    if isWalking and CONFIG.continuousWalk then
+                        local newNearest, newDistance = getNearestItem()
+                        
+                        if newNearest and newNearest ~= currentTargetItem then
+                            currentTargetItem = newNearest
+                            walkRetryCount = 0
+                        else
+                            stopWalking()
+                        end
+                    end
+                else
+                    moveToPosition(position)
+                    
+                    task.wait(CONFIG.walkUpdateRate)
+                end
+            else
+                if isWalking and CONFIG.continuousWalk then
+                    local newNearest, newDistance = getNearestItem()
+                    
+                    if newNearest then
+                        currentTargetItem = newNearest
+                        walkRetryCount = 0
+                    else
+                        stopWalking()
+                    end
+                else
+                    stopWalking()
+                end
+            end
+        end
+    end)
+end
+
+createMiniButton = function()
+    if miniButtonGui then
+        pcall(function() miniButtonGui:Destroy() end)
+        miniButtonGui = nil
+    end
+    
+    miniButtonGui = Instance.new("ScreenGui")
+    miniButtonGui.Name = "ESPMiniButtonGui"
+    miniButtonGui.ResetOnSpawn = false
+    miniButtonGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    
+    local success = pcall(function()
+        miniButtonGui.Parent = player.PlayerGui
+    end)
+    
+    if not success then
+        pcall(function()
+            miniButtonGui.Parent = game:GetService("CoreGui")
+        end)
+    end
+    
+    miniButton = Instance.new("TextButton")
+    miniButton.Name = "MiniButton"
+    miniButton.Size = CONFIG.miniButtonSize
+    miniButton.Position = CONFIG.miniButtonPosition
+    miniButton.BackgroundColor3 = CONFIG.miniButtonColor
+    miniButton.BackgroundTransparency = CONFIG.miniButtonBackgroundTransparency
+    miniButton.BorderSizePixel = 0
+    miniButton.Text = CONFIG.miniButtonText
+    miniButton.TextColor3 = CONFIG.miniButtonTextColor
+    miniButton.TextSize = CONFIG.miniButtonTextSize
+    miniButton.Font = Enum.Font.GothamBold
+    miniButton.AutoButtonColor = true
+    miniButton.Parent = miniButtonGui
+    
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 8)
+    corner.Parent = miniButton
+    
+    local stroke = Instance.new("UIStroke")
+    stroke.Color = CONFIG.guiBorderColor
+    stroke.Thickness = 2
+    stroke.Parent = miniButton
+    
+    miniButton.MouseButton1Click:Connect(function()
+        toggleMainGUI()
+    end)
+end
+
+toggleMainGUI = function()
+    if not gui then
+        createGUI()
+    end
+    
+    guiVisible = not guiVisible
+    
+    if gui then
+        gui.Enabled = guiVisible
+    end
+    
+    if guiVisible then
+        if miniButtonGui then
+            miniButtonGui.Enabled = false
+        end
+    else
+        if not miniButtonGui then
+            createMiniButton()
+        else
+            miniButtonGui.Enabled = true
+        end
+    end
+end
+
+local function createGUI()
+    if gui then
+        pcall(function() gui:Destroy() end)
+        gui = nil
+    end
+    
+    if miniButtonGui then
+        pcall(function() miniButtonGui:Destroy() end)
+        miniButtonGui = nil
+    end
+    
+    gui = Instance.new("ScreenGui")
+    gui.Name = "ESPControlGui"
+    gui.ResetOnSpawn = false
+    gui.DisplayOrder = 1000
+    gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    
+    local userInputService = game:GetService("UserInputService")
+    
+    local success = false
+    pcall(function()
+        gui.Parent = player.PlayerGui
+        success = true
+        if CONFIG.debugMode then
+            print("Đã đặt GUI vào PlayerGui")
+        end
+    end)
+    
+    if not success then
+        pcall(function()
+            gui.Parent = game:GetService("CoreGui")
+            success = true
+            if CONFIG.debugMode then
+                print("Đã đặt GUI vào CoreGui")
+            end
+        end)
+    end
+    
+    if not success then
+        warn("Không thể tạo giao diện ESP Control")
+        return nil
+    end
+    
+    local mainFrame = Instance.new("Frame")
+    mainFrame.Name = "MainFrame"
+    mainFrame.Size = CONFIG.guiFrameSize
+    mainFrame.Position = CONFIG.guiFramePosition
+    mainFrame.BackgroundColor3 = CONFIG.guiBackgroundColor
+    mainFrame.BackgroundTransparency = CONFIG.guiBackgroundTransparency
+    mainFrame.BorderSizePixel = CONFIG.guiBorderThickness
+    mainFrame.BorderColor3 = CONFIG.guiBorderColor
+    mainFrame.Parent = gui
+    
+    local uiCorner = Instance.new("UICorner")
+    uiCorner.CornerRadius = UDim.new(0, 8)
+    uiCorner.Parent = mainFrame
+    
+    local uiStroke = Instance.new("UIStroke")
+    uiStroke.Color = Color3.fromRGB(0, 200, 255)
+    uiStroke.Thickness = 2
+    uiStroke.Parent = mainFrame
+    
+    local title = Instance.new("TextLabel")
+    title.Name = "Title"
+    title.Size = UDim2.new(1, 0, 0, 30)
+    title.BackgroundColor3 = Color3.fromRGB(10, 10, 40)
+    title.BackgroundTransparency = 0.1
+    title.TextColor3 = CONFIG.guiTitleColor
+    title.Text = "Menu esp"
+    title.Font = Enum.Font.GothamBold
+    title.TextSize = 16
+    title.Parent = mainFrame
+    
+    local titleCorner = Instance.new("UICorner")
+    titleCorner.CornerRadius = UDim.new(0, 8)
+    titleCorner.Parent = title
+    
+    local hideButton = Instance.new("TextButton")
+    hideButton.Name = "HideButton"
+    hideButton.Size = UDim2.new(0, 25, 0, 25)
+    hideButton.Position = UDim2.new(1, -30, 0, 3)
+    hideButton.BackgroundTransparency = 1
+    hideButton.Text = "X"
+    hideButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    hideButton.Font = Enum.Font.GothamBold
+    hideButton.TextSize = 16
+    hideButton.Parent = title
+    
+    hideButton.MouseButton1Click:Connect(function()
+        toggleMainGUI()
+    end)
+    
+    local itemNameLabel = Instance.new("TextLabel")
+    itemNameLabel.Name = "ItemNameLabel"
+    itemNameLabel.Size = UDim2.new(0.9, 0, 0, 20)
+    itemNameLabel.Position = UDim2.new(0.05, 0, 0, 40)
+    itemNameLabel.BackgroundTransparency = 1
+    itemNameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    itemNameLabel.Text = "Tên vật phẩm (ngăn cách bằng dấu phẩy):"
+    itemNameLabel.Font = Enum.Font.SourceSansBold
+    itemNameLabel.TextSize = 14
+    itemNameLabel.TextXAlignment = Enum.TextXAlignment.Left
+    itemNameLabel.Parent = mainFrame
+    
+    local textBox = Instance.new("TextBox")
+    textBox.Name = "ItemNameInput"
+    textBox.Size = UDim2.new(0.9, 0, 0, 30)
+    textBox.Position = UDim2.new(0.05, 0, 0, 65)
+    textBox.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
+    textBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+    textBox.PlaceholderText = "Tên vật phẩm (ngăn cách bằng dấu phẩy)"
+    textBox.PlaceholderColor3 = Color3.fromRGB(200, 200, 200)
+    textBox.Text = table.concat(CONFIG.targetNames, ", ")
+    textBox.Font = Enum.Font.Gotham
+    textBox.TextSize = 14
+    textBox.ClearTextOnFocus = false
+    textBox.Parent = mainFrame
+    
+    local textBoxCorner = Instance.new("UICorner")
+    textBoxCorner.CornerRadius = UDim.new(0, 6)
+    textBoxCorner.Parent = textBox
+    
+    local applyButton = Instance.new("TextButton")
+    applyButton.Name = "ApplyButton"
+    applyButton.Size = UDim2.new(0.45, 0, 0, 30)
+    applyButton.Position = UDim2.new(0.05, 0, 0, 105)
+    applyButton.BackgroundColor3 = CONFIG.guiButtonColor
+    applyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    applyButton.Text = "Áp dụng"
+    applyButton.Font = Enum.Font.GothamBold
+    applyButton.TextSize = 16
+    applyButton.Parent = mainFrame
+    
+    local applyCorner = Instance.new("UICorner")
+    applyCorner.CornerRadius = UDim.new(0, 6)
+    applyCorner.Parent = applyButton
+    
+    local toggleButton = Instance.new("TextButton")
+    toggleButton.Name = "ToggleButton"
+    toggleButton.Size = UDim2.new(0.45, 0, 0, 30)
+    toggleButton.Position = UDim2.new(0.5, 0, 0, 105)
+    toggleButton.BackgroundColor3 = espEnabled and CONFIG.guiToggleOnColor or CONFIG.guiToggleOffColor
+    toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    toggleButton.Text = espEnabled and "Tắt ESP" or "Bật ESP"
+    toggleButton.Font = Enum.Font.GothamBold
+    toggleButton.TextSize = 16
+    toggleButton.Parent = mainFrame
+    
+    local toggleCorner = Instance.new("UICorner")
+    toggleCorner.CornerRadius = UDim.new(0, 6)
+    toggleCorner.Parent = toggleButton
+    
+    local walkButton = Instance.new("TextButton")
+    walkButton.Name = "WalkButton"
+    walkButton.Size = UDim2.new(0.9, 0, 0, 30)
+    walkButton.Position = UDim2.new(0.05, 0, 0, 145)
+    walkButton.BackgroundColor3 = Color3.fromRGB(255, 150, 0)
+    walkButton.BackgroundTransparency = 0.2
+    walkButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    walkButton.Text = isWalking and "Dừng đi bộ" or "Đi đến vật phẩm gần nhất"
+    walkButton.Font = Enum.Font.GothamBold
+    walkButton.TextSize = 14
+    walkButton.Parent = mainFrame
+    
+    local walkCorner = Instance.new("UICorner")
+    walkCorner.CornerRadius = UDim.new(0, 6)
+    walkCorner.Parent = walkButton
+    
+    local noclipButton = Instance.new("TextButton")
+    noclipButton.Name = "NoclipButton"
+    noclipButton.Size = UDim2.new(0.45, 0, 0, 30)
+    noclipButton.Position = UDim2.new(0.05, 0, 0, 185)
+    noclipButton.BackgroundColor3 = noclipEnabled and CONFIG.guiToggleOnColor or CONFIG.guiToggleOffColor
+    noclipButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    noclipButton.Text = noclipEnabled and "Tắt Noclip" or "Bật Noclip"
+    noclipButton.Font = Enum.Font.GothamBold
+    noclipButton.TextSize = 14
+    noclipButton.Parent = mainFrame
+    
+    local noclipCorner = Instance.new("UICorner")
+    noclipCorner.CornerRadius = UDim.new(0, 6)
+    noclipCorner.Parent = noclipButton
+    
+    local autoInteractButton = Instance.new("TextButton")
+    autoInteractButton.Name = "AutoInteractButton"
+    autoInteractButton.Size = UDim2.new(0.45, 0, 0, 30)
+    autoInteractButton.Position = UDim2.new(0.5, 0, 0, 185)
+    autoInteractButton.BackgroundColor3 = autoInteractEnabled and CONFIG.guiToggleOnColor or CONFIG.guiToggleOffColor
+    autoInteractButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    autoInteractButton.Text = autoInteractEnabled and "Tắt Auto-F" or "Bật Auto-F"
+    autoInteractButton.Font = Enum.Font.GothamBold
+    autoInteractButton.TextSize = 14
+    autoInteractButton.Parent = mainFrame
+    
+    local autoInteractCorner = Instance.new("UICorner")
+    autoInteractCorner.CornerRadius = UDim.new(0, 6)
+    autoInteractCorner.Parent = autoInteractButton
+    
+    local speedLabel = Instance.new("TextLabel")
+    speedLabel.Name = "SpeedLabel"
+    speedLabel.Size = UDim2.new(0.9, 0, 0, 20)
+    speedLabel.Position = UDim2.new(0.05, 0, 0, 225)
+    speedLabel.BackgroundTransparency = 1
+    speedLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+    speedLabel.Text = "Tốc độ đi : " .. CONFIG.walkSpeed .. " studs/giây\nScrtipy By HoanqSon2107<3N"
+    speedLabel.Font = Enum.Font.SourceSans
+    speedLabel.TextSize = 14
+    speedLabel.Parent = mainFrame
+    
+    applyButton.MouseButton1Click:Connect(function()
+        local input = textBox.Text
+        if input ~= "" then
+            local names = {}
+            for name in string.gmatch(input, "[^,%s]+") do
+                table.insert(names, name)
+            end
+            
+            if #names > 0 then
+                changeTargetNames(names)
+            end
+        end
+    end)
+    
+    toggleButton.MouseButton1Click:Connect(function()
+        toggleESP()
+        toggleButton.Text = espEnabled and "Tắt ESP" or "Bật ESP"
+        toggleButton.BackgroundColor3 = espEnabled and CONFIG.guiToggleOnColor or CONFIG.guiToggleOffColor
+    end)
+    
+    walkButton.MouseButton1Click:Connect(function()
+        if isWalking then
+            stopWalking()
+            walkButton.Text = "Đi đến vật phẩm gần nhất"
+            walkButton.BackgroundColor3 = Color3.fromRGB(255, 150, 0)
+        else
+            walkToNearestItem()
+            walkButton.Text = "Dừng đi bộ"
+            walkButton.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
+        end
+    end)
+    
+    noclipButton.MouseButton1Click:Connect(function()
+        toggleNoclip()
+        
+        noclipButton.Text = noclipEnabled and "Tắt Noclip" or "Bật Noclip"
+        noclipButton.BackgroundColor3 = noclipEnabled and CONFIG.guiToggleOnColor or CONFIG.guiToggleOffColor
+    end)
+    
+    autoInteractButton.MouseButton1Click:Connect(function()
+        toggleAutoInteract()
+        
+        autoInteractButton.Text = autoInteractEnabled and "Tắt Auto-F" or "Bật Auto-F"
+        autoInteractButton.BackgroundColor3 = autoInteractEnabled and CONFIG.guiToggleOnColor or CONFIG.guiToggleOffColor
+    end)
+    
+    local dragging = false
+    local dragInput
+    local dragStart
+    local startPos
+    
+    local function updateDrag(input)
+        local delta = input.Position - dragStart
+        mainFrame.Position = UDim2.new(
+            startPos.X.Scale, 
+            startPos.X.Offset + delta.X,
+            startPos.Y.Scale,
+            startPos.Y.Offset + delta.Y
+        )
+    end
+    
+    title.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStart = input.Position
+            startPos = mainFrame.Position
+            uiStroke.Color = Color3.fromRGB(255, 165, 0)
+            uiStroke.Thickness = 3
+            
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                    uiStroke.Color = Color3.fromRGB(0, 200, 255)
+                    uiStroke.Thickness = 2
+                end
+            end)
+        end
+    end)
+    
+    title.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            dragInput = input
+        end
+    end)
+    
+    userInputService.InputChanged:Connect(function(input)
+        if input == dragInput and dragging then
+            updateDrag(input)
+        end
+    end)
+    
+    return gui
+end
+
+local function handleInput(input, gameProcessed)
+    if gameProcessed then return end
+    
+    if input.KeyCode == CONFIG.toggleKey then
+        toggleESP()
+        
+        if gui and gui.Enabled then
+            local toggleButton = gui:FindFirstChild("MainFrame"):FindFirstChild("ToggleButton")
+            if toggleButton then
+                toggleButton.Text = espEnabled and "Tắt ESP" or "Bật ESP"
+                toggleButton.BackgroundColor3 = espEnabled and CONFIG.guiToggleOnColor or CONFIG.guiToggleOffColor
+            end
+        end
+    end
+    
+    if input.KeyCode == CONFIG.miniButtonToggleKey then
+        if not guiVisible then
+            toggleMainGUI()
+        end
+    end
+    
+    if input.KeyCode == CONFIG.noclipToggleKey then
+        toggleNoclip()
+        
+        if gui and gui.Enabled then
+            local noclipButton = gui:FindFirstChild("MainFrame"):FindFirstChild("NoclipButton")
+            if noclipButton then
+                noclipButton.Text = noclipEnabled and "Tắt Noclip" or "Bật Noclip"
+                noclipButton.BackgroundColor3 = noclipEnabled and CONFIG.guiToggleOnColor or CONFIG.guiToggleOffColor
+            end
+        end
+    end
+    
+    if input.KeyCode == CONFIG.interactToggleKey then
+        toggleAutoInteract()
+        
+        if gui and gui.Enabled then
+            local autoInteractButton = gui:FindFirstChild("MainFrame"):FindFirstChild("AutoInteractButton")
+            if autoInteractButton then
+                autoInteractButton.Text = autoInteractEnabled and "Tắt Auto-F" or "Bật Auto-F"
+                autoInteractButton.BackgroundColor3 = autoInteractEnabled and CONFIG.guiToggleOnColor or CONFIG.guiToggleOffColor
+            end
+        end
+    end
+end
+
+local function setupEvents()
+    game:GetService("UserInputService").InputBegan:Connect(handleInput)
+    
+    player.CharacterAdded:Connect(function(newCharacter)
+        character = newCharacter
+        hrp = character:WaitForChild("HumanoidRootPart")
+        humanoid = character:WaitForChild("Humanoid")
+        
+        if noclipEnabled then
+            toggleNoclip()
+            toggleNoclip()
+        end
+    end)
+end
+
+local function startScript()
+    createGUI()
+    setupEvents()
+end
+
+startScript()
